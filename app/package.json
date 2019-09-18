@@ -1,0 +1,23 @@
+{
+  "name": "pilvi",
+  "version": "0.0.1",
+  "description": "Cloudy testing",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev": "./node_modules/nodemon/bin/nodemon.js index.js",
+    "start": "node index.js",
+    "test": "echo Ok && exit 1",
+    "dockerify": "docker build -t pilvi .",
+    "docker": "docker run -p 8001:8000 -d --rm --name pilvi pilvi",
+    "dockerstop": "docker stop -t 1 pilvi"
+  },
+  "author": "Jukka Aittola <jaittola@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
