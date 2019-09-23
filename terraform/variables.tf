@@ -22,6 +22,10 @@ variable "app_port" {
     default = "8000"
 }
 
+variable "ext_port" {
+    default = "80"
+}
+
 variable "health_check_path" {
     default = "/"
 }

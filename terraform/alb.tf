@@ -26,7 +26,7 @@ resource "aws_alb_target_group" "fancyapp" {
 # Redirect all traffic from the ALB to the target group
 resource "aws_alb_listener" "front_end" {
     load_balancer_arn = aws_alb.alb.id
-    port              = var.app_port
+    port              = var.ext_port
     protocol          = "HTTP"
 
     default_action {
