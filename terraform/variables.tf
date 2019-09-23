@@ -2,8 +2,8 @@ variable "region" {
     default = "eu-central-1"
 }
 
-variable "availability_zone" {
-    default = "eu-central-1b"
+variable "availability_zone_count" {
+    default = 2
 }
 
 variable "instance_type" {
@@ -18,10 +18,20 @@ variable "cidr_block" {
     default = "10.100.0.0/16"
 }
 
-variable "public_subnet" {
-    default = "10.100.1.0/24"
+variable "app_port" {
+    default = "8000"
 }
 
-variable "private_subnet" {
-    default = "10.100.2.0/24"
+variable "health_check_path" {
+    default = "/"
+}
+
+variable "fargate_cpu" {
+  description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
+  default     = "256"
+}
+
+variable "fargate_memory" {
+  description = "Fargate instance memory to provision (in MiB)"
+  default     = "512"
 }

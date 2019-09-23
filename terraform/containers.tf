@@ -1,0 +1,52 @@
+
+resource "aws_ecs_cluster" "maincluster" {
+     name = "fancyapp-maincluster"
+}
+
+resource "aws_ecs_task_definition" "fancyapp" {
+    execution_role_arn       = aws_iam_role.ecs_task_excution_role.arn
+    family                   = "fancyapp"
+    network_mode             = "awsvpc"
+    requires_compatibilities = ["FARGATE"]
+    cpu                      = var.fargate_cpu
+    memory                   = var.fargate_memory
+    container_definitions =  <<DEFINITION
+[
+  {
+    "essential": true,
+    "image": "106820074386.dkr.ecr.eu-central-1.amazonaws.com/fancyapp-repo:latest",
+    "name": "fancyapp",
+    "cpu": 256,
+    "memory": 512,
+    "portMappings" : [
+        {
+            "containerPort": 8000,
+            "hostPort": 8000
+        }
+    ]
+  }
+]
+DEFINITION
+}
+
+resource "aws_ecs_service" "main" {
+    name            = "cb-service"
+    cluster         = aws_ecs_cluster.maincluster.id
+    task_definition = aws_ecs_task_definition.fancyapp.arn
+    desired_count   = 1
+    launch_type     = "FARGATE"
+
+    network_configuration {
+        security_groups  = [aws_security_group.alb_to_ecs.id]
+        subnets          = aws_subnet.public_subnets.*.id
+        assign_public_ip = true
+    }
+
+    load_balancer {
+        target_group_arn = aws_alb_target_group.fancyapp.id
+        container_port   = var.app_port
+        container_name   = "fancyapp"
+    }
+
+    depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_excution_role_policy ]
+}
