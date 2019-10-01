@@ -1,17 +1,24 @@
 import React from 'react';
 import './App.css';
 import { AppContext, AppModel, appModelReducer } from './AppModel';
+import { getLogEntries } from './BackendRequests';
 import { LogEntriesView } from './LogEntries';
 import { NewLogEntryView } from './NewLogEntry';
 import { SearchInput } from './SearchInput';
+import { SearchResultView } from './SearchResultView';
 
 const App: React.FC = () => {
-  const initialAppModel = new AppModel([
-    { timestamp: new Date(2011, 2, 1, 12, 0, 0), text: 'A very old log entry' },
-    { timestamp: new Date(), text: 'My first log entry' },
-  ]);
+  const reducer = React.useReducer(appModelReducer, new AppModel());
 
-  const reducer = React.useReducer(appModelReducer, initialAppModel);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const logEntries = await getLogEntries();
+      const [, dispatcher] = reducer;
+      dispatcher({ kind: 'UpdateLogEntries', entries: logEntries });
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AppContext.Provider value={reducer}>
@@ -24,13 +31,13 @@ const App: React.FC = () => {
 
         <h3>New entry</h3>
 
-        <NewLogEntryView/>
+        <NewLogEntryView />
 
         <h3>Search</h3>
 
         <SearchInput placeholderValue="Enter search term" />
 
-        <LogEntriesView title="Search results" entrySelector={(model) => model.searchResultEntries} />
+        <SearchResultView title="Search results" />
 
       </div>
     </AppContext.Provider>

@@ -1,35 +1,39 @@
-import { LogEntry } from './AppModel';
-
-enum Method {
-    Get = 'GET',
-    Put = 'PUT',
-}
-
-interface BackendUrl {
-    method: Method;
-    url: string;
-}
-
-class PutUrl implements BackendUrl {
-    method = Method.Put;
-    constructor(public url: string) {}
-}
-
-class GetUrl implements BackendUrl {
-    method = Method.Get;
-    constructor(public url: string) {}
-}
+import { array, date, field, string, succeed } from 'jsonous';
+import { LogEntry } from '../../common-ts/src/LogEntry';
 
 const backendBaseUrl = 'http://localhost:8000/api/1/';
-const saveNewEntryUrl = new PutUrl(`${backendBaseUrl}/save`);
-const getLatestEntriesUrl = new GetUrl(`${backendBaseUrl}/get-latest`);
+const saveNewEntryUrl = `${backendBaseUrl}save`;
+const getLatestEntriesUrl = `${backendBaseUrl}get-latest`;
+const searchUrl = `${backendBaseUrl}search?term=`;
 
 export async function saveNewEntryToBackend(entry: string): Promise<LogEntry[]> {
-    return new Promise((resolve) => {
-        setTimeout(() => resolve([
-            { timestamp: new Date(2011, 2, 1, 12, 0, 0), text: 'A very old log entry' },
-            { timestamp: new Date(), text: 'My first log entry' },
-            { timestamp: new Date(), text: entry },
-        ]), 5000);
-    });
+    return fetch(saveNewEntryUrl,
+        {
+            method: 'PUT',
+            headers: [['Content-Type', 'application/json']],
+            body: JSON.stringify({ text: entry }),
+        })
+        .then((response) => parseLogEntry(response.text()));
 }
+
+export async function getLogEntries(): Promise<LogEntry[]> {
+    return fetch(getLatestEntriesUrl)
+        .then((response) => parseLogEntry(response.text()));
+}
+
+export async function searchLogEntries(searchTerm: string): Promise<LogEntry[]> {
+    return fetch(`${searchUrl}${encodeURIComponent(searchTerm)}`)
+    .then((response) => parseLogEntry(response.text()));
+}
+
+async function parseLogEntry(jsonPromise: Promise<string>): Promise<LogEntry[]> {
+    return jsonPromise
+        .then((jsonString) => array(logEntryDecoder)
+            .decodeJson(jsonString)
+            .getOrElse(() => { throw new Error('Invalid JSON input'); }));
+}
+
+const logEntryDecoder =
+    succeed({})
+        .assign('text', field('text', string))
+        .assign('timestamp', field('timestamp', date));

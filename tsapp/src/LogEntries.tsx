@@ -1,12 +1,13 @@
 import React from 'react';
-import { AppModel, LogEntry, useStateValue } from './AppModel';
+import LogEntry from '../../common-ts/src/LogEntry';
+import { AppModel, useStateValue } from './AppModel';
 
 interface LogEntriesViewProps {
     title: string;
     entrySelector: (model: AppModel) => LogEntry[];
 }
 
-const LogEntryTableRow: React.FC<LogEntry> = ({ timestamp, text }, idx: number) =>
+export const LogEntryTableRow: React.FC<LogEntry> = ({ timestamp, text }, idx: number) =>
     <tr key={`log-entry-${idx}`}>
         <td>{timestamp.toISOString()}</td>
         <td>{text}</td>

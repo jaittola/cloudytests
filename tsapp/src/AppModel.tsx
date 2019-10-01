@@ -1,18 +1,10 @@
 import React from 'react';
-
-export interface LogEntry {
-    timestamp: Date;
-    text: string;
-}
+import LogEntry from '../../common-ts/src/LogEntry';
 
 export class AppModel {
     searchTerm: string = '';
     searchResultEntries: LogEntry[] = [];
     latestEntries: LogEntry[] = [];
-
-    constructor(initialEntries?: LogEntry[]) {
-        this.latestEntries = initialEntries || [];
-    }
 }
 
 export interface UpdateSearch {
@@ -25,27 +17,33 @@ export interface UpdateLogEntries {
     entries: LogEntry[];
 }
 
+export interface UpdateSearchResults {
+    kind: 'UpdateSearchResults';
+    entries: LogEntry[];
+}
+
 type Action =
     UpdateSearch
-    | UpdateLogEntries;
+    | UpdateLogEntries
+    | UpdateSearchResults;
 
 export function appModelReducer(state: AppModel, action: Action): AppModel {
-    console.log(`AppModelReducer with action ${action}`);
-
     switch (action.kind) {
         case 'UpdateSearch': {
             const newState = { ...state };
             newState.searchTerm = (action as UpdateSearch).searchTerm;
-            newState.searchResultEntries =
-                state.latestEntries
-                    .filter((entry) => entry.text.includes(newState.searchTerm));
-
             return newState;
         }
         case 'UpdateLogEntries': {
             const ue = (action as UpdateLogEntries);
             const newState = { ...state };
             newState.latestEntries = ue.entries;
+            return newState;
+        }
+        case 'UpdateSearchResults': {
+            const usr = action as UpdateSearchResults;
+            const newState = { ...state };
+            newState.searchResultEntries = usr.entries;
             return newState;
         }
     }
@@ -66,6 +64,6 @@ export function useStateValue(): AppModelAndDispatcher {
     if (isSaneCtx(ctx)) {
         return ctx;
     } else {
-        return [new AppModel(), () => {}];
+        return [new AppModel(), () => { }];
     }
 }
