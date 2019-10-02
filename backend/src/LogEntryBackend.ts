@@ -57,6 +57,16 @@ class LogEntryBackend {
             res.sendStatus(400);
         }
     }
+
+    async health(res: Response) {
+        try {
+            await db.query('SELECT 1');
+            res.sendStatus(200);
+        } catch (e) {
+            console.error('HEALTH CHECK FAILED', e);
+            res.sendStatus(500);
+        }
+    }
 }
 
 export const logEntryBackend = new LogEntryBackend();

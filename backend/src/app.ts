@@ -14,5 +14,6 @@ app.get('/', (_req, res) => res.redirect(frontendUri));
 app.put('/api/1/save', (req, res) => logEntryBackend.saveLogEntry(req, res));
 app.get('/api/1/get-latest', (_req, res) => logEntryBackend.getLatestEntries(res));
 app.get('/api/1/search', (req, res) => logEntryBackend.search(req, res));
+app.get('/health', (_req, res) => logEntryBackend.health(res));
 
 app.listen(port, () => console.log(`Listening to port ${port}`));
