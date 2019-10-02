@@ -23,7 +23,19 @@ resource "aws_ecs_task_definition" "fancyapp" {
             "containerPort": 8000,
             "hostPort": 8000
         }
-    ]
+    ],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "logs-fancyapp",
+            "awslogs-region": "eu-central-1",
+            "awslogs-stream-prefix": "fancyapp-app"
+        }
+    },
+    "secrets": [{
+        "name": "DB_URI",
+        "valueFrom": "${aws_secretsmanager_secret.db_url.id}"
+    }]
   }
 ]
 DEFINITION
@@ -48,5 +60,5 @@ resource "aws_ecs_service" "main" {
         container_name   = "fancyapp"
     }
 
-    depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_excution_role_policy ]
+    depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_excution_role_policy, aws_db_instance.devdb ]
 }

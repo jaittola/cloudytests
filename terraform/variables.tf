@@ -27,7 +27,7 @@ variable "ext_port" {
 }
 
 variable "health_check_path" {
-    default = "/"
+    default = "/health"
 }
 
 variable "fargate_cpu" {
@@ -38,4 +38,9 @@ variable "fargate_cpu" {
 variable "fargate_memory" {
   description = "Fargate instance memory to provision (in MiB)"
   default     = "512"
+}
+
+variable "db_port" {
+    description = "RDS PostgreSQL listen port"
+    default = "5432"
 }
