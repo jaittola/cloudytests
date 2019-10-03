@@ -1,7 +1,7 @@
 import { array, date, field, string, succeed } from 'jsonous';
 import { LogEntry } from '../../common-ts/src/LogEntry';
 
-const backendBaseUrl = 'http://localhost:8000/api/1/';
+const backendBaseUrl = process.env.REACT_APP_BACKEND || 'http://localhost:8000/api/1/';
 const saveNewEntryUrl = `${backendBaseUrl}save`;
 const getLatestEntriesUrl = `${backendBaseUrl}get-latest`;
 const searchUrl = `${backendBaseUrl}search?term=`;
