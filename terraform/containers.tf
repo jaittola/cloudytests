@@ -35,7 +35,10 @@ resource "aws_ecs_task_definition" "fancyapp" {
     "secrets": [{
         "name": "DB_URI",
         "valueFrom": "${aws_secretsmanager_secret.db_url.id}"
-    }]
+    }],
+    "environment": [
+        { "name": "FRONTEND_URI", "value": "${var.frontend_protocol}${var.frontend_name}" }
+    ]
   }
 ]
 DEFINITION

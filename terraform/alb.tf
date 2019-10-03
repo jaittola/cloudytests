@@ -1,3 +1,8 @@
+data "aws_acm_certificate" "backend_cert" {
+  domain   = var.backend_name
+  statuses = ["ISSUED"]
+}
+
 resource "aws_alb" "alb" {
     subnets         = aws_subnet.public_subnets.*.id
     security_groups = [aws_security_group.alb.id]
@@ -27,7 +32,9 @@ resource "aws_alb_target_group" "fancyapp" {
 resource "aws_alb_listener" "front_end" {
     load_balancer_arn = aws_alb.alb.id
     port              = var.ext_port
-    protocol          = "HTTP"
+    protocol          = "HTTPS"
+    ssl_policy        = "ELBSecurityPolicy-2016-08"
+    certificate_arn   = data.aws_acm_certificate.backend_cert.arn
 
     default_action {
         target_group_arn = aws_alb_target_group.fancyapp.id
