@@ -16,8 +16,6 @@ resource "aws_ecs_task_definition" "fancyapp" {
     "essential": true,
     "image": "106820074386.dkr.ecr.eu-central-1.amazonaws.com/fancyapp-repo:latest",
     "name": "fancyapp",
-    "cpu": 256,
-    "memory": 512,
     "portMappings" : [
         {
             "containerPort": 8000,
@@ -49,12 +47,11 @@ resource "aws_ecs_service" "main" {
     cluster         = aws_ecs_cluster.maincluster.id
     task_definition = aws_ecs_task_definition.fancyapp.arn
     desired_count   = 1
-    launch_type     = "FARGATE"
+    launch_type     = "EC2"
 
     network_configuration {
         security_groups  = [aws_security_group.alb_to_ecs.id]
         subnets          = aws_subnet.public_subnets.*.id
-        assign_public_ip = true
     }
 
     load_balancer {

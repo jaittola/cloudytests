@@ -7,7 +7,7 @@ variable "availability_zone_count" {
 }
 
 variable "instance_type" {
-    default = "t3.nano"
+    default = "t3.micro"
 }
 
 variable "environment_tag" {
@@ -69,4 +69,9 @@ variable "cloudfront_cert_arn" {
 variable "cloudfront_priceclass" {
     description = "Price class for the CloudFront distribution. PriceClass_100 includes only North America and Europe."
     default = "PriceClass_100"
+}
+
+variable "ecs_container_ami_id" {
+    description = "ID of the AMI used for the EC2 hosts. This is AWS region specific. The default value is in Frankfurt."
+    default = "ami-084ab95c0cbe247e5"
 }

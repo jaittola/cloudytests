@@ -28,8 +28,8 @@ data "aws_iam_policy_document" "frontend_bucket" {
   }
 }
 
-output "bucket-domain-name" {
-  value = aws_s3_bucket.frontend.bucket_domain_name
+output "bucket-website-endpoint" {
+  value = aws_s3_bucket.frontend.website_endpoint
 }
 
 output "bucket_url" {
