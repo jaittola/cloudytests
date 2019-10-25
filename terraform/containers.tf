@@ -40,6 +40,7 @@ resource "aws_ecs_task_definition" "fancyapp" {
   }
 ]
 DEFINITION
+    depends_on = [ aws_instance.ecs_container_host ]
 }
 
 resource "aws_ecs_service" "main" {
@@ -60,5 +61,5 @@ resource "aws_ecs_service" "main" {
         container_name   = "fancyapp"
     }
 
-    depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_excution_role_policy, aws_db_instance.devdb ]
+    depends_on = [ aws_instance.ecs_container_host, aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_excution_role_policy, aws_db_instance.devdb ]
 }
