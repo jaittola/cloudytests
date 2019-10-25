@@ -6,6 +6,11 @@ variable "availability_zone_count" {
     default = 2
 }
 
+variable "service_count" {
+    description = "Number of container and EC2 instances. Should be <= availability_zone_count"
+    default = 2
+}
+
 variable "instance_type" {
     default = "t3.micro"
 }

@@ -46,7 +46,7 @@ resource "aws_ecs_service" "main" {
     name            = "cb-service"
     cluster         = aws_ecs_cluster.maincluster.id
     task_definition = aws_ecs_task_definition.fancyapp.arn
-    desired_count   = 1
+    desired_count   = var.service_count
     launch_type     = "EC2"
 
     network_configuration {

@@ -17,10 +17,11 @@ resource "aws_security_group" "sg_ssh_in" {
 }
 
 resource "aws_instance" "ecs_container_host" {
+  count = var.service_count
   ami = var.ecs_container_ami_id
   instance_type = var.instance_type
-  availability_zone = data.aws_availability_zones.available.names[0]
-  subnet_id = aws_subnet.public_subnets[0].id
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  subnet_id = aws_subnet.public_subnets[count.index].id
   vpc_security_group_ids = [ aws_security_group.sg_ssh_in.id,  aws_security_group.alb_to_ecs.id ]
   iam_instance_profile = aws_iam_instance_profile.ecs-instance-profile.id
   associate_public_ip_address = true
@@ -34,9 +35,9 @@ USERDATA
 }
 
 output "hostname" {
-    value = aws_instance.ecs_container_host.public_dns
+    value = aws_instance.ecs_container_host[*].public_dns
 }
 
 output "host_id" {
-    value = aws_instance.ecs_container_host.id
+    value = aws_instance.ecs_container_host[*].id
 }
